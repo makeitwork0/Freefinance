@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.ui.screens.AccountLogScreen
+import com.example.ui.screens.ApkReleaseScreen
 import com.example.ui.screens.AssetsScreen
 import com.example.ui.screens.BudgetScreen
 import com.example.ui.screens.CategoryManagerScreen
@@ -48,7 +49,8 @@ enum class MainDestination {
   SETTINGS,
   HOME_SCREEN_WIDGETS,
   RECEIPTS_INBOX,
-  ASSETS
+  ASSETS,
+  APK_RELEASES
 }
 
 class MainActivity : ComponentActivity() {
@@ -210,7 +212,8 @@ class MainActivity : ComponentActivity() {
               SettingsScreen(
                 viewModel = dashboardViewModel,
                 onNavigateBack = { currentDestination = MainDestination.DASHBOARD },
-                onNavigateToWidgets = { currentDestination = MainDestination.HOME_SCREEN_WIDGETS }
+                onNavigateToWidgets = { currentDestination = MainDestination.HOME_SCREEN_WIDGETS },
+                onNavigateToApkReleases = { currentDestination = MainDestination.APK_RELEASES }
               )
             }
             MainDestination.HOME_SCREEN_WIDGETS -> {
@@ -236,6 +239,11 @@ class MainActivity : ComponentActivity() {
                 onNavigateBack = { currentDestination = MainDestination.DASHBOARD }
               )
             }
+            MainDestination.APK_RELEASES -> {
+              ApkReleaseScreen(
+                onNavigateBack = { currentDestination = MainDestination.SETTINGS }
+              )
+            }
           }
         }
       }
@@ -258,6 +266,8 @@ class MainActivity : ComponentActivity() {
       intent?.getStringExtra("OPEN_DESTINATION")?.uppercase() == "DEBTS" -> MainDestination.DEBTS
       intent?.getStringExtra("OPEN_DESTINATION")?.uppercase() == "WIDGETS" -> MainDestination.HOME_SCREEN_WIDGETS
       intent?.getStringExtra("OPEN_DESTINATION")?.uppercase() == "ASSETS" -> MainDestination.ASSETS
+      intent?.getStringExtra("OPEN_DESTINATION")?.uppercase() == "RELEASES" -> MainDestination.APK_RELEASES
+      intent?.getStringExtra("OPEN_DESTINATION")?.uppercase() == "APK" -> MainDestination.APK_RELEASES
       else -> MainDestination.DASHBOARD
     }
     destinationState = dest

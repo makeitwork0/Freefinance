@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -83,6 +84,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -419,9 +421,28 @@ fun DashboardScreen(
                 CircularProgressIndicator()
             }
         } else {
-            val accountMap = remember(uiState.accounts) { uiState.accounts.associateBy { it.id } }
+            val dashboardListState = rememberLazyListState()
+
+            val accountMap by remember(uiState.accounts) {
+                derivedStateOf { uiState.accounts.associateBy { it.id } }
+            }
+
+            val activeOrderedCards by remember(cardOrder, activeCards) {
+                derivedStateOf {
+                    cardOrder.filter { it != DashboardCardType.TOTAL_BALANCE && activeCards.contains(it) }
+                }
+            }
+
+            val recentTransactions by remember(uiState.recentTransactions) {
+                derivedStateOf { uiState.recentTransactions }
+            }
+
+            val isRecentEmpty by remember(uiState.recentTransactions) {
+                derivedStateOf { uiState.recentTransactions.isEmpty() }
+            }
 
             LazyColumn(
+                state = dashboardListState,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
@@ -478,124 +499,104 @@ fun DashboardScreen(
                 // -------------------------------------------------------------
                 // MODULAR CARDS: Dynamically rendered based on activeCards & custom cardOrder
                 // -------------------------------------------------------------
-                cardOrder.forEach { cardType ->
-                    if (cardType != DashboardCardType.TOTAL_BALANCE && activeCards.contains(cardType)) {
-                        when (cardType) {
-                            DashboardCardType.TOTAL_BALANCE -> Unit // Already rendered as Hero
-                            DashboardCardType.MONEY_FLOW -> {
-                                item(key = cardType.name, contentType = "modular_card") {
-                                    MoneyFlowCard(
-                                        moneyFlow = moneyFlowState,
-                                        currencyCode = uiState.baseCurrency,
-                                        onClick = { selectedCardDetail = DashboardCardType.MONEY_FLOW },
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                }
-                            }
-                            DashboardCardType.BUDGET_PROGRESS -> {
-                                item(key = cardType.name, contentType = "modular_card") {
-                                    BudgetPercentCard(
-                                        budgets = budgetState,
-                                        currencyCode = uiState.baseCurrency,
-                                        onClick = { selectedCardDetail = DashboardCardType.BUDGET_PROGRESS },
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                }
-                            }
-                            DashboardCardType.DEBT_SUMMARY -> {
-                                item(key = cardType.name, contentType = "modular_card") {
-                                    DebtSummaryCard(
-                                        topReceivables = topReceivables,
-                                        totalLent = totalActiveLent,
-                                        currencyCode = uiState.baseCurrency,
-                                        onViewDebtsClicked = onNavigateToDebts,
-                                        onClick = { selectedCardDetail = DashboardCardType.DEBT_SUMMARY },
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                }
-                            }
-                            DashboardCardType.LIQUID_VS_LOCKED -> {
-                                item(key = cardType.name, contentType = "modular_card") {
-                                    LiquidVsLockedCard(
-                                        state = liquidVsLockedState,
-                                        currencyCode = uiState.baseCurrency,
-                                        onClick = { selectedCardDetail = DashboardCardType.LIQUID_VS_LOCKED },
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                }
-                            }
-                            DashboardCardType.PROJECT_TRACKER -> {
-                                item(key = cardType.name, contentType = "modular_card") {
-                                    ProjectTrackerCard(
-                                        projectState = projectTrackerState,
-                                        currencyCode = uiState.baseCurrency,
-                                        onClick = { selectedCardDetail = DashboardCardType.PROJECT_TRACKER },
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                }
-                            }
-                            DashboardCardType.LONG_TERM_EXPECTED -> {
-                                item(key = cardType.name, contentType = "modular_card") {
-                                    LongTermExpectedCard(
-                                        expectedItems = longTermExpectedState,
-                                        currencyCode = uiState.baseCurrency,
-                                        onClick = { selectedCardDetail = DashboardCardType.LONG_TERM_EXPECTED },
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                }
-                            }
-                            DashboardCardType.WEEKLY_FORECAST -> {
-                                item(key = cardType.name, contentType = "modular_card") {
-                                    WeeklyForecastCard(
-                                        weeklyBalances = weeklyForecastState,
-                                        currencyCode = uiState.baseCurrency,
-                                        onClick = { selectedCardDetail = DashboardCardType.WEEKLY_FORECAST },
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                }
-                            }
-                            DashboardCardType.UPCOMING_BILLS -> {
-                                item(key = cardType.name, contentType = "modular_card") {
-                                    UpcomingBillsCard(
-                                        recurringBills = recurringTransactions,
-                                        currencyCode = uiState.baseCurrency,
-                                        onViewBillsClicked = onNavigateToSubscriptions,
-                                        onClick = { selectedCardDetail = DashboardCardType.UPCOMING_BILLS },
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                }
-                            }
-                            DashboardCardType.SPENDING_CATEGORIES -> {
-                                item(key = cardType.name, contentType = "modular_card") {
-                                    SpendingCategoriesCard(
-                                        categoryExpenses = categoryExpenses,
-                                        currencyCode = uiState.baseCurrency,
-                                        onViewCategoriesClicked = onNavigateToCategories,
-                                        onClick = { selectedCardDetail = DashboardCardType.SPENDING_CATEGORIES },
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                }
-                            }
-                            DashboardCardType.SAVINGS_RATE -> {
-                                item(key = cardType.name, contentType = "modular_card") {
-                                    SavingsRateCard(
-                                        moneyFlow = moneyFlowState,
-                                        currencyCode = uiState.baseCurrency,
-                                        onClick = { selectedCardDetail = DashboardCardType.SAVINGS_RATE },
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                }
-                            }
-                            DashboardCardType.SPENDING_TRENDS -> {
-                                item(key = cardType.name, contentType = "modular_card") {
-                                    MonthlySpendingTrendsCard(
-                                        trends = monthlySpendingTrends,
-                                        currencyCode = uiState.baseCurrency,
-                                        onClick = { selectedCardDetail = DashboardCardType.SPENDING_TRENDS },
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                }
-                            }
+                items(
+                    items = activeOrderedCards,
+                    key = { "MODULAR_CARD_${it.name}" },
+                    contentType = { it.name }
+                ) { cardType ->
+                    when (cardType) {
+                        DashboardCardType.TOTAL_BALANCE -> Unit // Already rendered as Hero
+                        DashboardCardType.MONEY_FLOW -> {
+                            MoneyFlowCard(
+                                moneyFlow = moneyFlowState,
+                                currencyCode = uiState.baseCurrency,
+                                onClick = { selectedCardDetail = DashboardCardType.MONEY_FLOW },
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                        DashboardCardType.BUDGET_PROGRESS -> {
+                            BudgetPercentCard(
+                                budgets = budgetState,
+                                currencyCode = uiState.baseCurrency,
+                                onClick = { selectedCardDetail = DashboardCardType.BUDGET_PROGRESS },
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                        DashboardCardType.DEBT_SUMMARY -> {
+                            DebtSummaryCard(
+                                topReceivables = topReceivables,
+                                totalLent = totalActiveLent,
+                                currencyCode = uiState.baseCurrency,
+                                onViewDebtsClicked = onNavigateToDebts,
+                                onClick = { selectedCardDetail = DashboardCardType.DEBT_SUMMARY },
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                        DashboardCardType.LIQUID_VS_LOCKED -> {
+                            LiquidVsLockedCard(
+                                state = liquidVsLockedState,
+                                currencyCode = uiState.baseCurrency,
+                                onClick = { selectedCardDetail = DashboardCardType.LIQUID_VS_LOCKED },
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                        DashboardCardType.PROJECT_TRACKER -> {
+                            ProjectTrackerCard(
+                                projectState = projectTrackerState,
+                                currencyCode = uiState.baseCurrency,
+                                onClick = { selectedCardDetail = DashboardCardType.PROJECT_TRACKER },
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                        DashboardCardType.LONG_TERM_EXPECTED -> {
+                            LongTermExpectedCard(
+                                expectedItems = longTermExpectedState,
+                                currencyCode = uiState.baseCurrency,
+                                onClick = { selectedCardDetail = DashboardCardType.LONG_TERM_EXPECTED },
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                        DashboardCardType.WEEKLY_FORECAST -> {
+                            WeeklyForecastCard(
+                                weeklyBalances = weeklyForecastState,
+                                currencyCode = uiState.baseCurrency,
+                                onClick = { selectedCardDetail = DashboardCardType.WEEKLY_FORECAST },
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                        DashboardCardType.UPCOMING_BILLS -> {
+                            UpcomingBillsCard(
+                                recurringBills = recurringTransactions,
+                                currencyCode = uiState.baseCurrency,
+                                onViewBillsClicked = onNavigateToSubscriptions,
+                                onClick = { selectedCardDetail = DashboardCardType.UPCOMING_BILLS },
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                        DashboardCardType.SPENDING_CATEGORIES -> {
+                            SpendingCategoriesCard(
+                                categoryExpenses = categoryExpenses,
+                                currencyCode = uiState.baseCurrency,
+                                onViewCategoriesClicked = onNavigateToCategories,
+                                onClick = { selectedCardDetail = DashboardCardType.SPENDING_CATEGORIES },
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                        DashboardCardType.SAVINGS_RATE -> {
+                            SavingsRateCard(
+                                moneyFlow = moneyFlowState,
+                                currencyCode = uiState.baseCurrency,
+                                onClick = { selectedCardDetail = DashboardCardType.SAVINGS_RATE },
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                        DashboardCardType.SPENDING_TRENDS -> {
+                            MonthlySpendingTrendsCard(
+                                trends = monthlySpendingTrends,
+                                currencyCode = uiState.baseCurrency,
+                                onClick = { selectedCardDetail = DashboardCardType.SPENDING_TRENDS },
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
                         }
                     }
                 }
@@ -633,7 +634,7 @@ fun DashboardScreen(
                 }
 
                 // 12. Recent Transactions List (Starts zero-mock empty)
-                if (uiState.recentTransactions.isEmpty()) {
+                if (isRecentEmpty) {
                     item(key = "EMPTY_RECENT_TRANSACTIONS", contentType = "placeholder") {
                         EmptyListPlaceholder(
                             icon = Icons.Default.ReceiptLong,
@@ -646,8 +647,8 @@ fun DashboardScreen(
                     }
                 } else {
                     items(
-                        items = uiState.recentTransactions,
-                        key = { it.id },
+                        items = recentTransactions,
+                        key = { "RECENT_TX_${it.id}" },
                         contentType = { "transaction_item" }
                     ) { tx ->
                         val account = accountMap[tx.accountId]
@@ -1434,7 +1435,7 @@ fun AccountsBreakdownRow(
     onAccountClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val chunkedAccounts = remember(accounts) { accounts.chunked(2) }
+    val chunkedAccounts by remember(accounts) { derivedStateOf { accounts.chunked(2) } }
 
     Column(
         modifier = modifier
