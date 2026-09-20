@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <!-- Queries declared for Android 11+ (API 30+) Package Visibility to launch Banking and E-Wallet Apps -->
+    <queries>
+        <package android:name="com.maribank.ph" />
+        <package android:name="com.maribank.sg" />
+        <package android:name="com.maribank.id" />
+        <package android:name="com.globe.gcash.android" />
+        <package android:name="com.voyagerinnovation.paymaya" />
+        <package android:name="com.paymaya" />
+        <package android:name="ph.com.seabank.mobile" />
+        <package android:name="com.bdo.pay" />
+        <package android:name="com.bdo.online" />
+        <package android:name="com.bpi.ng.app" />
+        <package android:name="com.bpi.mobile" />
+        <package android:name="com.unionbankph.online" />
+        <package android:name="ph.gotyme.app" />
+        <package android:name="com.tonik.mobile" />
+        <package android:name="com.shopee.ph" />
+        <package android:name="com.grabtaxi.passenger" />
+        <package android:name="com.paypal.android.p2pmobile" />
+        <package android:name="com.revolut.revolut" />
+        <package android:name="com.transferwise.android" />
+        <package android:name="com.squareup.cash" />
+        <package android:name="com.venmo" />
+        <package android:name="com.cimb.cimbph" />
+        <package android:name="ph.com.eastwestbank.komo" />
+        <package android:name="com.rcbc.pulz" />
+        <package android:name="com.metrobank.mobile" />
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MyApplication">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.MyApplication">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Quick Balance Widget -->
+        <receiver
+            android:name=".ui.widget.QuickBalanceWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.ACTION_WIDGET_PINNED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_quick_balance_info" />
+        </receiver>
+
+        <!-- Quick Actions Bar Widget -->
+        <receiver
+            android:name=".ui.widget.QuickActionsWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.ACTION_WIDGET_PINNED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_quick_actions_info" />
+        </receiver>
+
+        <!-- Budget Burn Pace Widget -->
+        <receiver
+            android:name=".ui.widget.BudgetBurnWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.ACTION_WIDGET_PINNED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_budget_burn_info" />
+        </receiver>
+
+        <!-- Monthly Spending Trends Snapshot Widget -->
+        <receiver
+            android:name=".ui.widget.MonthlyTrendsWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.ACTION_WIDGET_PINNED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_monthly_trends_info" />
+        </receiver>
+
+        <!-- 2x2 Square Net Worth Widget -->
+        <receiver
+            android:name=".ui.widget.BalanceSquareWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.ACTION_WIDGET_PINNED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_balance_square_info" />
+        </receiver>
+
+        <!-- 2x2 Square Budget Widget -->
+        <receiver
+            android:name=".ui.widget.BudgetSquareWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.ACTION_WIDGET_PINNED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_budget_square_info" />
+        </receiver>
+
+        <!-- 2x2 Square 4-Grid Quick Actions Widget -->
+        <receiver
+            android:name=".ui.widget.QuickActionsSquareWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.ACTION_WIDGET_PINNED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_quick_actions_square_info" />
+        </receiver>
+    </application>
+
+</manifest>

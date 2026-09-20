@@ -1,0 +1,6 @@
+{
+  "name": "My Finance",
+  "description": "Comprehensive personal finance tracker with multi-currency net worth, privacy balance masking, quick bank app launching, interactive monthly spending trends, and budget pace monitoring.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

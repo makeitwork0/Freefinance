@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Wallet body -->
+    <path
+        android:fillColor="#00E676"
+        android:pathData="M27,36 C27,32.7 29.7,30 33,30 L75,30 C78.3,30 81,32.7 81,36 L81,42 L33,42 C30.8,42 29,43.8 29,46 C29,48.2 30.8,50 33,50 L81,50 L81,72 C81,75.3 78.3,78 75,78 L33,78 C29.7,78 27,75.3 27,72 Z" />
+    <!-- Wallet flap -->
+    <path
+        android:fillColor="#00B0FF"
+        android:pathData="M63,48 L79,48 C81.2,48 83,49.8 83,52 L83,62 C83,64.2 81.2,66 79,66 L63,66 C60.8,66 59,64.2 59,62 L59,52 C59,49.8 60.8,48 63,48 Z" />
+    <!-- Coin / Clasp inside flap -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M71,57m-3,0a3,3 0 1,0 6,0a3,3 0 1,0 -6,0" />
+    <!-- Trending upward indicator spark -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M43,62 L51,54 L47,54 L47,50 L57,50 L57,60 L53,60 L53,56 L45,64 Z" />
+</vector>
