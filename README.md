@@ -130,6 +130,16 @@ You can download ready-to-install APK packages directly:
 
 ---
 
+## ☕ Support the Developer
+
+If you find **My Finance** useful for managing your personal finances, consider supporting ongoing development:
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-rohan__reyes-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/rohan_reyes)
+
+- **Buy Me a Coffee**: [buymeacoffee.com/rohan_reyes](https://buymeacoffee.com/rohan_reyes)
+
+---
+
 ## 📄 License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
